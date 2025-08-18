@@ -1,0 +1,50 @@
+[
+  {
+    "name": "Jan Kowalski",
+    "business_name": "Kowalski Transport",
+    "date": "2025-07-10",
+    "sales": 5,
+    "status": "online",
+    "amount": 12500.5
+  },
+  {
+    "name": "Anna Nowak",
+    "business_name": "Nowak Design Studio",
+    "date": "2025-07-12",
+    "sales": 2,
+    "status": "offline",
+    "amount": 3200.0
+  },
+  {
+    "name": "Michał Wiśniewski",
+    "business_name": "Wiśniewski IT",
+    "date": "2025-07-09",
+    "sales": 8,
+    "status": "online",
+    "amount": 8800.75
+  },
+  {
+    "name": "Katarzyna Zielińska",
+    "business_name": "Zielińska Consulting",
+    "date": "2025-07-14",
+    "sales": 3,
+    "status": "offline",
+    "amount": 4600.0
+  },
+  {
+    "name": "Piotr Maj",
+    "business_name": "Maj Solutions",
+    "date": "2025-07-13",
+    "sales": 6,
+    "status": "online",
+    "amount": 7250.2
+  },
+  {
+    "name": "Ewa Grabowska",
+    "business_name": "Grabowska Marketing",
+    "date": "2025-07-11",
+    "sales": 4,
+    "status": "offline",
+    "amount": 5100.0
+  }
+]
