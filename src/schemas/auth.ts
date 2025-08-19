@@ -44,3 +44,12 @@ export const addInvoiceSchema = z
     (data) => data.createdDate >= data.sellingDate,
     "Data wystawienia musi być wcześniejsza niż data sprzedania",
   );
+export const changePasswordSchema = z
+  .object({
+    changePassword: z.string().min(8, "Hasło jest za krótkie"),
+    repeatChangePassword: z.string(),
+  })
+  .refine(
+    (data) => data.changePassword === data.repeatChangePassword,
+    "Hasła nie pasują do siebie",
+  );

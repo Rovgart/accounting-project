@@ -1,4 +1,3 @@
-import SearchBar from "../components/molecules/SearchBar";
 import { SlidersHorizontal } from "lucide-react";
 import Button from "../components/atoms/Button";
 import Invoices from "../components/molecules/Invoices";

@@ -7,6 +7,7 @@ import InvoiceDetailsPage from "../pages/login-page/invoiceDetails/invoiceDetail
 import DashboardHome from "./DashboardHome";
 import RegisterForm from "../components/molecules/RegisterForm";
 import CustomersPage from "../pages/login-page/CustomersPage";
+import SettingsPage from "../pages/SettingsPage";
 export const router = createBrowserRouter([
   {
     path: "/",
@@ -30,6 +31,7 @@ export const router = createBrowserRouter([
         children: [
           { index: true, Component: DashboardHome },
           { path: "customers", Component: CustomersPage },
+          { path: "settings", Component: SettingsPage },
         ],
       },
       {

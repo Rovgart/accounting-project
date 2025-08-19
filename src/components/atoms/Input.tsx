@@ -30,7 +30,7 @@ export default function Input({
   const className = [baseClassname, VARIANTS[variants], classNames].join("");
   return (
     <div className="flex flex-col gap-2">
-      {label && <label>{label}</label>}
+      {label && <label className="text-sm font-semibold">{label}</label>}
       <input
         aria-label={label}
         className={className}

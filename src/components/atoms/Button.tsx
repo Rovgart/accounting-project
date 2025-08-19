@@ -27,11 +27,11 @@ export default function Button({
   ...rest
 }: ButtonPropsI) {
   const baseClass =
-    "flex justify-items items-center rounded-sm px-1 py-2 cursor-pointer";
+    "flex justify-items items-center rounded-md px-1 py-2 cursor-pointer ";
 
   const classes = [baseClass, VARIANTS[variant], className].join("");
   return (
-    <div className="flex items-center justify-center cursor-pointer ">
+    <div className="flex items-center justify-center cursor-pointer  ">
       {leftIcon || ""}
       <button type={type} className={classes} onClick={onClick} {...rest}>
         {text}
