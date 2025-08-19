@@ -4,18 +4,39 @@ from datetime import date
 from typing import Annotated
 
 
+class JWTPayload(BaseModel):
+    user_id: int
+    email: str
+    exp: str
+
+
+class UserData(BaseModel):
+    email: str
+    firstname: str
+    lastName: str
+    password: str
+
+
+class LoginRequest:
+    email: str
+    password: str
+
 
 class AuthResponse(BaseModel):
-    access_token:str
-    refresh_token:str
+    message: str
+    access_token: str
+
+
 class LoginResponse(BaseModel):
-    email:str
-    password:str
+    email: str
+    password: str
+
+
 class UserModel(BaseModel):
     user_id: int
     email: EmailStr
-    password_hash: Annotated[str, StringConstraints(min_length=8)]  
-    role : Annotated[str, StringConstraints(pattern="^(accountant|client|admin)$")]
+    password_hash: Annotated[str, StringConstraints(min_length=8)]
+    role: Annotated[str, StringConstraints(pattern="^(accountant|client|admin)$")]
     created_at: date
 
     class Config:
@@ -49,6 +70,7 @@ class InvoiceModel(BaseModel):
 
     class Config:
         from_attributes = True
+
 
 class InvoiceDetailModel(BaseModel):
     invoice_detail_id: int
