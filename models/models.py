@@ -67,3 +67,4 @@ class InvoiceDetail(Base):
     total_price = Column(Float, nullable=False)
 
     invoice = relationship("Invoice", back_populates="details")
+
