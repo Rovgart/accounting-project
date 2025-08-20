@@ -25,7 +25,7 @@ export default function LoginForm() {
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
-      className=" max-w-[75%] mx-auto px-4 py-6 shadow-md shadow-[var(--color-text)] bg-white rounded-md w-full  "
+      className=" max-w-[75%] mx-auto flex flex-col px-4 py-6 shadow-md shadow-[var(--color-text)] bg-white rounded-md w-full  "
     >
       <picture className="sm:size-[256px] size-[128px]">
         <source srcSet={loginIcon} />

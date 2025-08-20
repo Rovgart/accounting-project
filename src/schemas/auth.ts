@@ -1,35 +1,62 @@
 import z from "zod";
 
-export const loginSchema = z.object({
-  email: z.email("Niepoprawny adres e-mail"),
-  password: z
-    .string()
-    .min(8, "Hasło jest za krótkie")
-    .max(56, "Hasło jest za długie"),
-  rememberMe: z.boolean().optional().default(false),
-});
-
 export const registerSchema = z
   .object({
     email: z.email("Niepoprawny adres e-mail"),
+    firstname: z
+      .string()
+      .min(3, "Imię jest za krótkie")
+      .max(60, "Imię jest az długie"),
+    lastname: z
+      .string()
+      .min(3, "Nazwisko jest za krótkie")
+      .max(60, "Nazwisko jest za długie"),
     password: z
       .string()
       .min(8, "Hasło jest za słabe")
       .max(56, "Hasło jest za długie"),
     repeatPassword: z.string(),
-    nip: z
-      .string()
-      .startsWith("16", "NIP powinien zaczynać się od 16")
-      .max(12, "Numer NIP jest za długi"),
-    companyAddress: z
-      .string()
-      .min(3, "Adres firmy jest za krótki")
-      .max(56, "Adres firmy jest za długi"),
     privacyPolicy: z.boolean("Proszę zaakceptować politykę prywatności "),
   })
   .refine((data) => data.password === data.repeatPassword, {
     path: ["repeatPassword"],
   });
+
+export const loginSchema = z.object({
+  email: z.email("Niepoprawny adres e-mail"),
+  password: z.string(),
+  rememberMe: z.boolean().optional().default(false),
+});
+export const accountantSchema = registerSchema.extend({
+  accountantBureau: z
+    .string()
+    .min(3, "Nazwa BR jest zbyt krótka")
+    .max(120, "Nazwa BR jest zbyt długa"),
+  certificationNumber: z
+    .string()
+    .regex(/^\d{6}$/, "Numer cert. powinien zawierać 6 liczb"),
+  officeAddress: z
+    .string()
+    .min(3, "Adres biura jest za krótki")
+    .max(50, "Adres biura jest za długi"),
+  phoneNumber: z
+    .string()
+    .regex(
+      /^(\+48|0048)? ?\d{3} ?\d{3} ?\d{3}$/,
+      "Numer telefonu jest niepoprawny",
+    ),
+  companiesServed: z
+    .string()
+    .max(80, "Przekroczono liczbę znaków w tym polu")
+    .optional(),
+});
+export const clientSchema = registerSchema.extend({
+  nip: z
+    .string()
+    .startsWith("16", "NIP powinien zaczynać się od 16")
+    .max(12, "Numer NIP jest za długi"),
+  companyAddress: z.string().optional(),
+});
 
 export const addInvoiceSchema = z
   .object({
@@ -53,3 +80,6 @@ export const changePasswordSchema = z
     (data) => data.changePassword === data.repeatChangePassword,
     "Hasła nie pasują do siebie",
   );
+
+export type ClientFormDataT = z.infer<typeof clientSchema>;
+export type AccountantFormDataT = z.infer<typeof accountantSchema>;

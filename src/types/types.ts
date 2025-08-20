@@ -1,6 +1,6 @@
 export type LoginResponseT = {
   access_token: string;
-  refresh_token: string;
+  refresh_token?: string;
 };
 export type LoginDataT = {
   email: string;

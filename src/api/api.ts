@@ -5,7 +5,7 @@ export class HTTPClient {
   private httpClient;
   constructor() {
     this.httpClient = axios.create({
-      baseURL: "http://localhost:3000/api",
+      baseURL: "http://localhost:8000/api",
       timeout: 1000,
     });
 
@@ -14,9 +14,11 @@ export class HTTPClient {
       if (token) {
         req.headers.Authorization = `Bearer ${token}`;
       }
+      return req;
     });
     this.httpClient.interceptors.response.use((res) => {
-      console.log(res.status);
+      console.log(res);
+      return res;
     });
   }
 
@@ -28,6 +30,7 @@ export class HTTPClient {
     const response = await this.httpClient.post("/auth/login", {
       ...data,
     });
+
     return response.data;
   }
   async register(data: RegisterDataT): Promise<LoginResponseT> {

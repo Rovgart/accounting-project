@@ -2,7 +2,7 @@ import { create } from "zustand";
 import { httpClientSingleton } from "../api/api";
 import type { LoginDataT, LoginResponseT, RegisterDataT } from "../types/types";
 import { AxiosError } from "axios";
-
+import Cookies from "js-cookie";
 type useAuthStoreT = {
   isAuthenticated: boolean;
   fullName: string | null;
@@ -33,12 +33,13 @@ export const useAuthStore = create<useAuthStoreT>((set) => ({
   login: async (data: LoginDataT) => {
     try {
       const response = await httpClientSingleton.login(data);
+      Cookies.set("access_token", response.access_token);
       return response;
     } catch (error) {
       if (error instanceof AxiosError) {
         throw new Error(error.message);
       } else {
-        throw new Error("Unexpected error occurred");
+        throw new Error(error);
       }
     }
   },
