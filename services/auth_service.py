@@ -1,10 +1,11 @@
 from database import AsyncSessionLocal
 from bcrypt import hashpw, gensalt, checkpw
-from models.models import User
 from fastapi import HTTPException, status
 from dotenv import dotenv_values
 from sqlalchemy import select
-from schemas.schemas import AuthResponse, UserData, LoginRequest
+from models.models import UserModel, Client, Accountant
+from schemas.schemas import AuthResponse, UserData, LoginRequest,User, UserContext
+from utils import ClientStrategy,AccountantStrategy
 from datetime import datetime
 from .jwt_service import Jwt_Service
 
@@ -18,7 +19,7 @@ class AuthService:
 
     async def authorize_user(self, userData: LoginRequest) -> AuthResponse:
         async with AsyncSessionLocal() as session:
-            stmt = select(User).where(User.email == userData.email)
+            stmt = select(UserModel).where(UserModel.email == userData.email)
             result = await session.execute(stmt)
             existing_user = result.scalar_one_or_none()
 
@@ -39,6 +40,16 @@ class AuthService:
         return AuthResponse(message="Successfully login !", access_token=token)
 
     async def register(self, userData: UserData) -> AuthResponse:
+        if userData.role=="client":
+            context=UserContext(ClientStrategy)
+            context.add_user()
+        if userData.role=="accountant":
+            context=UserContext(AccountantStrategy)
+            accountant=Accountant(
+                email=userData.email
+                firstname=userData.e
+            )
+            context.add_user()
         async with AsyncSessionLocal() as session:
             stmt = select(User).where(User.email == userData.email)
             result = await session.execute(stmt)
@@ -47,7 +58,7 @@ class AuthService:
             if existing_user:
                 raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED)
         hashed_password = self.hash_password(userData.password)
-        new_user = User(
+        new_user = UserModel(
             email=userData.email,
             firstname=userData.firstname,
             lastname=userData.lastName,
@@ -71,3 +82,7 @@ class AuthService:
         hashed_password = hashpw(password_bytes, salt)
         print(hashed_password)
         return hashed_password
+
+
+
+

@@ -1,9 +1,23 @@
-from typing import Union
 from router import router
-from contextlib import asynccontextmanager
+from fastapi.middleware.cors import CORSMiddleware
 
 from fastapi import FastAPI
 
-app = FastAPI()
+app = FastAPI(docs_url="/api/docs")
 
-app.include_router(router, prefix="/auth")
+origins = [
+    "http://localhost.tiangolo.com",
+    "https://localhost.tiangolo.com",
+    "http://localhost",
+    "http://localhost:8000",
+    "http://localhost:5173",
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+app.include_router(router, prefix="/api/auth")

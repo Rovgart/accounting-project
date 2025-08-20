@@ -30,13 +30,14 @@ class Status(enum.Enum):
     PENDING = "PENDING"
 
 
-class User(Base):
+class UserModel(Base):
     __tablename__ = "users"
-
     user_id = Column(Integer, primary_key=True, index=True)
-    email = Column(String(255), unique=True, nullable=False)
-    firstname = Column(String(255), nullable=False)
-    lastname = Column(String(255), nullable=False)
+    email = Column(
+        String(255),
+        nullable=False,
+        unique=False,
+    )
     password_hash = Column(String(255), nullable=False)
     role = Column(Enum(UserRole), nullable=False, default=UserRole.CLIENT)
     status = Column(Enum(Status), nullable=False, default=Status.ACTIVE)
@@ -50,20 +51,41 @@ class Client(Base):
     __tablename__ = "clients"
     client_id = Column(Integer, primary_key=True)
     user_id = Column(Integer, ForeignKey("users.user_id", ondelete="SET NULL"))
+    accountant_id = Column(String, ForeignKey("accountants.accountant_id"))
     company_name = Column(String, nullable=False)
-    nip = Column(String)
-    email = Column(String)
-    phone = Column(String)
-    address_street = Column(String)
-    address_postal = Column(String)
-    address_city = Column(String)
-    address_country = Column(String)
-    notes = Column(String)
-    created_at = Column(Date)
-    updated_at = Column(Date)
+    nip = Column(String, nullable=False)
+    email = Column(String, nullable=False, unique=True)
+    phone = Column(String, nullable=False, unique=True)
+    address_street = Column(String, nullable=False, unique=False)
+    address_postal = Column(String, nullable=False, unique=False)
+    address_city = Column(String, nullable=False, unique=False)
+    address_country = Column(String, nullable=False, unique=False)
+    notes = Column(String, nullable=True, unique=False)
+    created_at = Column(Date, nullable=False, unique=False)
+    updated_at = Column(Date, nullable=False, unique=False)
 
     user = relationship("User", back_populates="clients")
     invoices = relationship("Invoice", back_populates="client")
+
+
+class Accountant(Base):
+    __tablename__ = "accountants"
+    accountant_id = Column(String(255), primary_key=True)
+    user_id = Column(
+        String(255), ForeignKey("users.user_id", ondelete="SET NULL"), nullable=True
+    )
+
+    email = Column(String(255), nullable=False)
+    firstname = Column(String(255), nullable=False, unique=False)
+    lastname = Column(String(255), nullable=False, unique=False)
+    officeName = Column(String(255), nullable=False, unique=True)
+    certificateNumber = Column(String(255), nullable=False, unique=False)
+    officeAddress = Column(String(255), nullable=False, unique=False)
+    phoneNumber = Column(String(20), nullable=False)
+    companiesServed = Column(String(255), nullable=True, unique=False)
+
+    user = relationship("User", back_populates="accountants")
+    invoices = relationship("Invoice", back_populates="accountant")
 
 
 class Invoice(Base):
@@ -76,6 +98,8 @@ class Invoice(Base):
 
     client = relationship("Client", back_populates="invoices")
     details = relationship("InvoiceDetail", back_populates="invoice")
+    accountant = relationship("Accountant", back_populates="invoices")
+    accountant_id = Column(String(255), ForeignKey("accountants.accountant_id"))
 
 
 class InvoiceDetail(Base):

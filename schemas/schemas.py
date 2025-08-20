@@ -1,7 +1,7 @@
 from pydantic import BaseModel, EmailStr, StringConstraints
 from typing import Optional
 from datetime import date
-from typing import Annotated
+from typing import Annotated, Protocol
 
 
 class JWTPayload(BaseModel):
@@ -15,9 +15,10 @@ class UserData(BaseModel):
     firstname: str
     lastName: str
     password: str
+    role: str
 
 
-class LoginRequest:
+class LoginRequest(BaseModel):
     email: str
     password: str
 
@@ -82,3 +83,39 @@ class InvoiceDetailModel(BaseModel):
 
     class Config:
         from_attributes = True
+
+
+class User:
+    def __init__(self, user_id: str, email: str) -> None:
+        self.user_id = user_id
+        self.email = email
+
+
+class UserStrategy(Protocol):
+    def add_user(self, user: User) -> None:
+        return
+
+
+class Client(User):
+    def __init__(self, user_id, email: str, nip) -> None:
+        super().__init__(user_id=user_id, email=email)
+        self.nip = nip
+
+
+class Accountant(User):
+    def __init__(
+        self, user_id: EmailStr, email: EmailStr, certification_number: str
+    ) -> None:
+        super().__init__(user_id, email)
+        self.certification_number = certification_number
+
+
+class UserContext:
+    def __init__(self, strategy) -> None:
+        self.strategy = strategy
+
+    def set_strategy(self, set_strategy):
+        self.set_strategy = set_strategy
+
+    def add_user(self, user: User):
+        self.strategy.add_user(user)
