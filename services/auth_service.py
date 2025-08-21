@@ -45,10 +45,7 @@ class AuthService:
             context.add_user()
         if userData.role=="accountant":
             context=UserContext(AccountantStrategy)
-            accountant=Accountant(
-                email=userData.email
-                firstname=userData.e
-            )
+          
             context.add_user()
         async with AsyncSessionLocal() as session:
             stmt = select(User).where(User.email == userData.email)
