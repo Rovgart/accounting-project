@@ -1,4 +1,4 @@
-from models.models import Client, User, Accountant
+from models.models import Client, UserModel, Accountant
 from database import AsyncSessionLocal
 
 

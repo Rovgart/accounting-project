@@ -15,7 +15,11 @@ class UserData(BaseModel):
     firstname: str
     lastName: str
     password: str
+    nip: str
     role: str
+    companyAddress: str
+    privacy_policy: bool
+    isAccountant: bool
 
 
 class LoginRequest(BaseModel):
@@ -33,6 +37,20 @@ class LoginResponse(BaseModel):
     password: str
 
 
+class AccountantRegisterData(BaseModel):
+    email: str
+    firstname: str
+    lastname: str
+    password: str
+    nip: str
+    companyAddress: str
+    officeName: str
+    certificateNumber: str
+    officeAddress: str
+    phoneNumber: str
+    companiesServed: str
+
+
 class UserModel(BaseModel):
     user_id: int
     email: EmailStr
@@ -44,12 +62,11 @@ class UserModel(BaseModel):
         from_attributes = True
 
 
-class ClientModel(BaseModel):
-    client_id: int
-    user_id: int
+class ClientRegisterData(BaseModel):
     company_name: str
     nip: str
     email: EmailStr
+    password: str
     phone: str
     address_street: str
     address_postal: str
@@ -58,28 +75,6 @@ class ClientModel(BaseModel):
     notes: Optional[str] = None
     created_at: date
     updated_at: Optional[date] = None
-
-    class Config:
-        from_attributes = True
-
-
-class InvoiceModel(BaseModel):
-    invoice_id: int
-    invoice_number: str
-    companyName: str
-    client_id: int
-
-    class Config:
-        from_attributes = True
-
-
-class InvoiceDetailModel(BaseModel):
-    invoice_detail_id: int
-    invoice_id: int
-    product_name: str
-    quantity: int
-    unit_price: float
-    total_price: float  # np. quantity * unit_price
 
     class Config:
         from_attributes = True

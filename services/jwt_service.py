@@ -12,14 +12,14 @@ class Jwt_Service:
     SECRET_KEY = config["SECRET_KEY"]
     ALGORITHM = config["ALGORITHM"]
 
-    def encode_jwt(self, payload: JWTPayload):
+    def encode_jwt(self, payload):
         if payload:
             encoded_jwt = encode(payload, key=self.SECRET_KEY, algorithm=self.ALGORITHM)
             return encoded_jwt
         else:
             raise Exception("Not given payload")
 
-    def decode_jwt(self, payload: JWTPayload):
+    def decode_jwt(self, payload):
         if payload:
             decoded_jwt = decode(payload, key=self.SECRET_KEY, algorithm=self.ALGORITHM)
             return decoded_jwt
