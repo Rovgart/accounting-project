@@ -27,7 +27,7 @@ export const loginSchema = z.object({
   password: z.string(),
   rememberMe: z.boolean().optional().default(false),
 });
-export const accountantSchema = registerSchema.extend({
+export const accountantSchema = registerSchema.safeExtend({
   accountantBureau: z
     .string()
     .min(3, "Nazwa BR jest zbyt krótka")
@@ -44,13 +44,14 @@ export const accountantSchema = registerSchema.extend({
     .regex(
       /^(\+48|0048)? ?\d{3} ?\d{3} ?\d{3}$/,
       "Numer telefonu jest niepoprawny",
-    ),
+    )
+    .optional(),
   companiesServed: z
     .string()
     .max(80, "Przekroczono liczbę znaków w tym polu")
     .optional(),
 });
-export const clientSchema = registerSchema.extend({
+export const clientSchema = registerSchema.safeExtend({
   nip: z
     .string()
     .startsWith("16", "NIP powinien zaczynać się od 16")

@@ -6,7 +6,6 @@ export class HTTPClient {
   constructor() {
     this.httpClient = axios.create({
       baseURL: "http://localhost:8000/api",
-      timeout: 1000,
     });
 
     this.httpClient.interceptors.request.use((req) => {
