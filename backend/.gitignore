@@ -1,0 +1,44 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environments
+venv/
+env/
+.venv/
+
+# Distribution / packaging
+build/
+dist/
+*.egg-info/
+.eggs/
+
+# IDE / editors
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# Logs
+*.log
+
+# Environment variables
+.env
+.env.* 
+
+migrations/
+*.db
+*.sqlite3
+
+# Cache / temporary files
+*.pytest_cache/
+*.mypy_cache/
+*.coverage
+.coverage.*
+htmlcov/
+.pytest_cache/
+__pypackages__/
+
+# Misc
+*.DS_Store
