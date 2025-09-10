@@ -5,6 +5,7 @@ export default function rootRoute() {
   return (
     <div className="min-h-screen">
       <ModalManager />
+
       <Outlet></Outlet>
     </div>
   );

@@ -1,6 +1,7 @@
 import axios from "axios";
 import Cookies from "js-cookie";
-import type { LoginDataT, LoginResponseT, RegisterDataT } from "../types/types";
+import type { LoginDataT, LoginResponseT } from "../types/types";
+import type { AccountantFormDataT, ClientFormDataT } from "@/schemas/auth";
 export class HTTPClient {
   private httpClient;
   constructor() {
@@ -32,7 +33,9 @@ export class HTTPClient {
 
     return response.data;
   }
-  async register(data: RegisterDataT): Promise<LoginResponseT> {
+  async register(
+    data: ClientFormDataT | AccountantFormDataT,
+  ): Promise<LoginResponseT> {
     const response = await this.httpClient.post("/auth/register", {
       ...data,
     });

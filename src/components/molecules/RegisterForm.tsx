@@ -9,7 +9,6 @@ import {
 import { useState, type JSX } from "react";
 import { useSearchParams } from "react-router";
 import { useAuthStore } from "../../store/auth-store";
-import type { RegisterDataT } from "../../types/types";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 import {
@@ -21,7 +20,6 @@ import {
   FormMessage,
 } from "../ui/form";
 import { Checkbox } from "../ui/checkbox";
-import { Label } from "../ui/label";
 export default function RegisterForm(): JSX.Element {
   const [searchParams, setSearchParams] = useSearchParams();
   const [isChecked, setIsChecked] = useState<boolean>(false);
@@ -38,9 +36,14 @@ export default function RegisterForm(): JSX.Element {
       nip: "",
     },
   });
-  const onSubmit = (data: RegisterDataT) => {
+  const onSubmit = (data: ClientFormDataT | AccountantFormDataT) => {
     console.log(data);
     signUp(data);
+  };
+  const searchParamsHandler = () => {
+    return searchParams.get("role") === "accountant"
+      ? setSearchParams()
+      : setSearchParams({ role: "accountant" });
   };
   // const handleRedirect = (e: FormEvent<HTMLFormElement>) => {
   //   e.preventDefault();
@@ -77,9 +80,22 @@ export default function RegisterForm(): JSX.Element {
         <FormField
           control={form.control}
           name="password"
-          render={({ field }) => (
+          render={() => (
             <FormItem>
               <FormLabel>Hasło</FormLabel>
+              <FormControl>
+                <Input type="password" />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="repeatPassword"
+          render={() => (
+            <FormItem>
+              <FormLabel>Powtórz hasło</FormLabel>
               <FormControl>
                 <Input type="password" />
               </FormControl>
@@ -115,10 +131,10 @@ export default function RegisterForm(): JSX.Element {
         )}
         <FormField
           control={form.control}
-          name="repeatPassword"
-          render={({ field }) => (
+          name="phoneNumber"
+          render={() => (
             <FormItem>
-              <FormLabel>Numer telefonu</FormLabel>
+              <FormLabel>Numer telefonu (opcjonalnie)</FormLabel>
               <FormControl>
                 <Input />
               </FormControl>
@@ -142,8 +158,8 @@ export default function RegisterForm(): JSX.Element {
           <Button type="submit">Wyślij</Button>
           <Button
             type="button"
-            onClick={() => setSearchParams({ role: "accountant" })}
-            variant={"ghost"}
+            onClick={searchParamsHandler}
+            variant={"secondary"}
           >
             Rejestruje się jako {isAccountant ? "klient" : "księgowy"}
           </Button>
