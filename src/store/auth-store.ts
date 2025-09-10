@@ -1,8 +1,8 @@
 import { create } from "zustand";
 import { httpClientSingleton } from "../api/api";
 import type { LoginDataT, LoginResponseT } from "../types/types";
-import { AxiosError } from "axios";
 import Cookies from "js-cookie";
+
 import type { AccountantFormDataT, ClientFormDataT } from "@/schemas/auth";
 type useAuthStoreT = {
   isAuthenticated: boolean;
@@ -11,7 +11,8 @@ type useAuthStoreT = {
   refresh_token: string | null;
   setIsAuthenticated: () => void;
   login: (data: LoginDataT) => Promise<LoginResponseT>;
-  signUp: (data: ClientFormDataT | AccountantFormDataT) => Promise<LoginDataT>;
+  signUpClient: (data: ClientFormDataT) => Promise<LoginResponseT>;
+  signUpAccountant: (data: AccountantFormDataT) => Promise<LoginResponseT>;
 };
 export const useAuthStore = create<useAuthStoreT>((set) => ({
   isAuthenticated: false,
@@ -19,31 +20,19 @@ export const useAuthStore = create<useAuthStoreT>((set) => ({
   access_token: null,
   refresh_token: null,
   setIsAuthenticated: () => set(() => ({ isAuthenticated: true })),
-  signUp: async (
-    data: ClientFormDataT | AccountantFormDataT,
+  signUpClient: async (data: ClientFormDataT): Promise<LoginResponseT> => {
+    const tokens = await httpClientSingleton.registerClient(data);
+    return tokens;
+  },
+  signUpAccountant: async (
+    data: AccountantFormDataT,
   ): Promise<LoginResponseT> => {
-    try {
-      const tokens = await httpClientSingleton.register(data);
-      return tokens;
-    } catch (error) {
-      if (error instanceof AxiosError) {
-        throw new Error(error.message);
-      } else {
-        throw new Error("Unexpected error occurred");
-      }
-    }
+    const tokens = await httpClientSingleton.registerAccountant(data);
+    return tokens;
   },
   login: async (data: LoginDataT): Promise<LoginResponseT> => {
-    try {
-      const response = await httpClientSingleton.login(data);
-      Cookies.set("access_token", response.access_token);
-      return response;
-    } catch (error) {
-      if (error instanceof AxiosError) {
-        throw new Error(error.message);
-      } else {
-        throw new Error(error);
-      }
-    }
+    const response = await httpClientSingleton.login(data);
+    Cookies.set("access_token", response.access_token);
+    return response;
   },
 }));

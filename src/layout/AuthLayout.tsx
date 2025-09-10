@@ -1,18 +1,14 @@
 import { Outlet } from "react-router";
-import icon from "../assets/register-photo.svg";
+import { useState } from "react";
 export default function AuthLayout() {
+  useState();
   return (
-    <div className="min-h-screen grid grid-cols-[40%_60%] items-center  ">
-      <div className="px-4 py-6 col-[1/-1] lg:col-[1/2] mx-auto m-0">
-        <Outlet />
+    <>
+      <div className="    ">
+        <div className="px-4 rounded-sm border shadow-md py-6 col-[1/-1] lg:col-[1/2] mx-auto m-0">
+          <Outlet />
+        </div>
       </div>
-      <picture className="size-[640px] overflow-hidden lg:block hidden  mx-auto">
-        <img
-          className="size-full overflow-hidden object-cover"
-          src={icon}
-          alt=""
-        />
-      </picture>
-    </div>
+    </>
   );
 }
