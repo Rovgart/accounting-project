@@ -1,5 +1,8 @@
 import { toast } from "sonner";
 import { create } from "zustand";
+
+export type ErrorDisplayType = "toast" | "silent" | "redirect";
+
 export type ErrorT = {
   errorName: string;
   errorMessage: string;
@@ -8,27 +11,40 @@ export type ErrorT = {
   context: string;
   date: string;
 };
-export type ErrorDisplayType = "toast" | "silent" | "redirect";
+
 interface ErrorStoreI {
-  setError: (error: string) => void;
   error: ErrorT | null;
+  setError: (error: ErrorT) => void;
   displayError: (error: ErrorT, type: ErrorDisplayType) => void;
   clearError: () => void;
 }
+
 export const useError = create<ErrorStoreI>((set) => ({
+  error: null,
+
+  setError: (error: ErrorT) => set({ error }),
+
   displayError: (error: ErrorT, type: ErrorDisplayType) => {
+    set({ error });
+
     switch (type) {
       case "toast":
-        toast(`${error.errorResponseCode}: ${error.errorMessage}`);
+        toast.error(
+          `${error.errorResponseCode || "ERR"}: ${error.errorMessage}`,
+        );
         break;
       case "silent":
-        console.log(`${error.errorResponseCode}:${error.errorMessage}`);
+        console.log(
+          `${error.errorResponseCode || "ERR"}: ${error.errorMessage}`,
+        );
+        break;
+      case "redirect":
+        window.location.href = "/404";
         break;
       default:
         break;
     }
   },
-  error: null,
-  setError: (err: string) => set(() => ({ error: err })),
-  clearError: () => set(() => ({ error: null })),
+
+  clearError: () => set({ error: null }),
 }));

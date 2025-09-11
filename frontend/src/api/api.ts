@@ -23,11 +23,13 @@ export class HTTPClient {
         return res;
       },
       (error) => {
+        const appError = errorService.fromAxios(error);
         if (error?.response?.status === 401) {
           // Logic for not-authenticated users probably some redirecting
+          errorService.notify(appError, "redirect");
         }
-        const appError = errorService.fromAxios(error);
-        errorService.notify(appError);
+
+        errorService.notify(appError, "silent");
         return Promise.reject(error);
       },
     );
