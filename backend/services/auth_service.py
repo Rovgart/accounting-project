@@ -37,58 +37,87 @@ class AuthService:
         return AuthResponse(message="Successfully login !", access_token=token)
 
     async def registerAccountant(
-        self, userData: AccountantRegisterData
+        self, accountantData: AccountantRegisterData
     ) -> AuthResponse:
-        if not userData.certificateNumber:
-            raise HTTPException(
-                status_code=400, detail="Certificate number is required"
-            )
-        new_user = await self.add_user_to_db("accountant", userData)
         async with AsyncSessionLocal() as session:
-            accountant = Accountant(
-                email=userData.email,
-                user_id=new_user.user_id,
-                firstname=userData.firstname,
-                lastname=userData.lastname,
-                officeName=userData.officeName,
-                officeAddress=userData.officeAddress,
-                phoneNumber=userData.phoneNumber,
-                companiesServed=userData.companiesServed,
+            sql_query = select(Accountant).where(
+                Accountant.certificateNumber == accountantData.certificateNumber
             )
-            session.add(accountant)
-            await session.commit()
-            await session.refresh(accountant)
-        token_payload = {"user_id": new_user.user_id, "email": new_user.email}
-        token = self.jwt_service.encode_jwt(token_payload)
-        return AuthResponse(
-            access_token=token, message="Successfully registered account !"
-        )
+            result = await session.execute(sql_query)
+            existing_certificate = result.scalar()
+            if existing_certificate:
+                raise HTTPException(
+                    status_code=status.HTTP_401_UNAUTHORIZED,
+                    detail="Księgowy o podanym certyfikacie już istnieje",
+                )
+            new_user = await self.add_user_to_db("accountant", accountantData)
+            if new_user:
+                accountant = Accountant(
+                    email=accountantData.email,
+                    accountant_id=new_user.user_id,
+                    user_id=new_user.user_id,
+                    firstname=accountantData.firstname,
+                    lastname=accountantData.lastname,
+                    officeName=accountantData.officeName,
+                    certificateNumber=accountantData.certificateNumber,
+                    officeAddress=accountantData.officeAddress,
+                    phoneNumber=accountantData.phoneNumber,
+                )
+                session.add(accountant)
+                await session.commit()
+                await session.refresh(accountant)
+                token_payload = {"user_id": new_user.user_id, "email": new_user.email}
+                token = self.jwt_service.encode_jwt(token_payload)
+                return AuthResponse(
+                    access_token=token, message="Successfully registered account !"
+                )
 
     async def registerClient(self, clientData: ClientRegisterData):
-        new_user = await self.add_user_to_db("client", clientData)
         async with AsyncSessionLocal() as session:
+            statement = select(Client).where(
+                Client.company_name == clientData.company_name
+            )
+
+            result = await session.execute(statement)
+            result2 = await session.execute(
+                select(Client).where(Client.nip == clientData.nip)
+            )
+
+            existing_nip = result.scalar()
+            existing_company_name = result2.scalar()
+
+            if existing_nip:
+                raise HTTPException(
+                    status_code=status.HTTP_400_BAD_REQUEST,
+                    detail="Podany klient z takim numerem NIP już istnieje",
+                )
+            if existing_company_name:
+                raise HTTPException(
+                    status_code=status.HTTP_400_BAD_REQUEST,
+                    detail="Podany nazwa firmy już istnieje",
+                )
+            new_user = await self.add_user_to_db("client", clientData)
             client = Client(
                 user_id=new_user.user_id,
                 email=clientData.email,
+                firstname=clientData.firstname,
+                lastname=clientData.lastname,
+                password=clientData.password,
                 company_name=clientData.company_name,
                 nip=clientData.nip,
                 phone=clientData.phone,
-                address_street=clientData.address_street,
-                address_postal=clientData.address_postal,
-                address_city=clientData.address_city,
-                address_country=clientData.address_country,
-                notes=clientData.notes,
                 created_at=datetime.utcnow(),
                 updated_at=datetime.utcnow(),
             )
-        session.add(client)
-        await session.commit()
-        await session.refresh(client)
-        token_payload = {"user_id": new_user.user_id, "email": new_user.email}
-        token = self.jwt_service.encode_jwt(token_payload)
-        return AuthResponse(
-            access_token=token, message="Successfully registered account !"
-        )
+
+            session.add(client)
+            await session.commit()
+            await session.refresh(client)
+            token_payload = {"user_id": new_user.user_id, "email": new_user.email}
+            token = self.jwt_service.encode_jwt(token_payload)
+            return AuthResponse(
+                access_token=token, message="Successfully registered account !"
+            )
 
     async def add_user_to_db(self, roleArg, userData):
         role_enum = UserRole[roleArg.upper()]  # np. "client" -> "CLIENT"
@@ -99,21 +128,23 @@ class AuthService:
             existing_user = result.scalar()
             if existing_user:
                 raise HTTPException(
-                    status_code=400,
-                    detail="User with this email address already exists ",
+                    status_code=status.HTTP_401_UNAUTHORIZED,
+                    detail="Użytkownik o takim adresie e-mail już istnieje",
                 )
+
             new_user = UserModel(
                 email=userData.email,
                 password_hash=self.hash_password(userData.password),
                 role=role_enum,
                 status="ACTIVE",
                 created_at=datetime.utcnow(),
+                isAccountantRegistration=1 if UserRole == "accountant" else 0,
             )
 
-        session.add(new_user)
-        await session.commit()
-        await session.refresh(new_user)
-        return new_user
+            session.add(new_user)
+            await session.commit()
+            await session.refresh(new_user)
+            return new_user
 
     @staticmethod
     def hash_password(password: str):

@@ -43,7 +43,6 @@ class UserModel(Base):
     status = Column(Enum(Status), nullable=False, default=Status.ACTIVE)
     created_at = Column(DateTime, nullable=False, default=datetime.utcnow)
     isAccountantRegistration = Column(Boolean, default=False)
-
     clients = relationship("Client", back_populates="user")
     accountants = relationship(
         "Accountant", back_populates="user", foreign_keys="Accountant.user_id"
@@ -58,19 +57,15 @@ class Client(Base):
     )
     user_id = Column(Integer, ForeignKey("users.user_id", ondelete="SET NULL"))
     accountant_id = Column(String, ForeignKey("accountants.accountant_id"))
-    company_name = Column(String, nullable=False)
-    nip = Column(String, nullable=False)
     email = Column(String, nullable=False, unique=True)
-    password_hash = Column(String(255), nullable=False)
-    phone = Column(String, nullable=False, unique=True)
-    address_street = Column(String, nullable=False, unique=False)
-    address_postal = Column(String, nullable=False, unique=False)
-    address_city = Column(String, nullable=False, unique=False)
-    address_country = Column(String, nullable=False, unique=False)
-    notes = Column(String, nullable=True, unique=False)
+    firstname = Column(String, nullable=False, unique=False)
+    lastname = Column(String, nullable=False, unique=False)
+    company_name = Column(String, nullable=False, unique=True)
+    nip = Column(String, nullable=False, unique=True)
+    password = Column(String(255), nullable=False, unique=False)
+    phone = Column(String, nullable=False, unique=False)
     created_at = Column(Date, nullable=False, unique=False)
     updated_at = Column(Date, nullable=False, unique=False)
-
     user = relationship("UserModel", back_populates="clients")
     invoices = relationship("Invoice", back_populates="client")
 
@@ -90,6 +85,7 @@ class Accountant(Base):
     officeAddress = Column(String(255), nullable=False, unique=False)
     phoneNumber = Column(String(20), nullable=False)
     companiesServed = Column(String(255), nullable=True, unique=False)
+    isVerified = Column(Boolean(), nullable=False, unique=False, default=0)
     user = relationship("UserModel", back_populates="accountants")
     invoices = relationship("Invoice", back_populates="accountant")
 

@@ -4,6 +4,12 @@ from datetime import date
 from typing import Annotated, Protocol
 
 
+class File(BaseModel):
+    filename: str
+    size: float
+    type: str
+
+
 class JWTPayload(BaseModel):
     user_id: int
     email: str
@@ -16,10 +22,8 @@ class UserData(BaseModel):
     lastName: str
     password: str
     nip: str
-    role: str
-    companyAddress: str
+    companyName: str
     privacy_policy: bool
-    isAccountant: bool
 
 
 class LoginRequest(BaseModel):
@@ -63,16 +67,13 @@ class UserModel(BaseModel):
 
 
 class ClientRegisterData(BaseModel):
-    company_name: str
-    nip: str
     email: EmailStr
+    firstname: str
+    lastname: str
     password: str
-    phone: str
-    address_street: str
-    address_postal: str
-    address_city: str
-    address_country: str
-    notes: Optional[str] = None
+    company_name: Optional[str] = None
+    nip: str
+    phone: Optional[str] = None
     created_at: date
     updated_at: Optional[date] = None
 
