@@ -40,7 +40,7 @@ class UserModel(Base):
     )
     password_hash = Column(String(255), nullable=False)
     role = Column(Enum(UserRole), nullable=False, default=UserRole.CLIENT)
-    status = Column(Enum(Status), nullable=False, default=Status.ACTIVE)
+    status = Column(Enum(Status), nullable=False, default=Status.PENDING)
     created_at = Column(DateTime, nullable=False, default=datetime.utcnow)
     isAccountantRegistration = Column(Boolean, default=False)
     clients = relationship("Client", back_populates="user")
@@ -57,12 +57,10 @@ class Client(Base):
     )
     user_id = Column(Integer, ForeignKey("users.user_id", ondelete="SET NULL"))
     accountant_id = Column(String, ForeignKey("accountants.accountant_id"))
-    email = Column(String, nullable=False, unique=True)
     firstname = Column(String, nullable=False, unique=False)
     lastname = Column(String, nullable=False, unique=False)
     company_name = Column(String, nullable=False, unique=True)
     nip = Column(String, nullable=False, unique=True)
-    password = Column(String(255), nullable=False, unique=False)
     phone = Column(String, nullable=False, unique=False)
     created_at = Column(Date, nullable=False, unique=False)
     updated_at = Column(Date, nullable=False, unique=False)
@@ -84,7 +82,6 @@ class Accountant(Base):
     certificateNumber = Column(String(255), nullable=False, unique=False)
     officeAddress = Column(String(255), nullable=False, unique=False)
     phoneNumber = Column(String(20), nullable=False)
-    companiesServed = Column(String(255), nullable=True, unique=False)
     isVerified = Column(Boolean(), nullable=False, unique=False, default=0)
     user = relationship("UserModel", back_populates="accountants")
     invoices = relationship("Invoice", back_populates="accountant")
@@ -116,3 +113,11 @@ class InvoiceDetail(Base):
     total_price = Column(Float, nullable=False)
 
     invoice = relationship("Invoice", back_populates="details")
+
+class UserTokens(Base):
+    __tablename__="user_tokens"
+    id=Column(Integer, primary_key=True)
+    user_id=Column(Integer, ForeignKey("users.user_id", ondelete="CASCADE"))
+    token=Column(String, nullable=True)
+    expires_at=Column(DateTime, nullable=False)
+    type=Column(String)

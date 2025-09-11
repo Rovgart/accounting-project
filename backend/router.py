@@ -1,11 +1,11 @@
 from fastapi import APIRouter
 from fastapi.responses import JSONResponse
 from schemas.schemas import LoginRequest, AccountantRegisterData, ClientRegisterData
-from services.auth_service import AuthService, Jwt_Service
+from services.auth_service import AuthService, Jwt_Service, Email_Service
 
 
 router = APIRouter()
-auth_service = AuthService(jwt_service=Jwt_Service())
+auth_service = AuthService(jwt_service=Jwt_Service(), email_service=Email_Service(Jwt_Service))
 
 
 @router.post("/login", tags=["Autoryzacja"])

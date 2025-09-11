@@ -15,6 +15,7 @@ class JWTPayload(BaseModel):
     email: str
     exp: str
 
+    
 
 class UserData(BaseModel):
     email: str
@@ -47,12 +48,10 @@ class AccountantRegisterData(BaseModel):
     lastname: str
     password: str
     nip: str
-    companyAddress: str
     officeName: str
     certificateNumber: str
     officeAddress: str
     phoneNumber: str
-    companiesServed: str
 
 
 class UserModel(BaseModel):
@@ -105,13 +104,3 @@ class Accountant(User):
         super().__init__(user_id, email)
         self.certification_number = certification_number
 
-
-class UserContext:
-    def __init__(self, strategy) -> None:
-        self.strategy = strategy
-
-    def set_strategy(self, set_strategy):
-        self.set_strategy = set_strategy
-
-    def add_user(self, user: User):
-        self.strategy.add_user(user)
