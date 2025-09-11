@@ -2,7 +2,7 @@ from jwt import encode, decode
 from dotenv import dotenv_values
 from schemas.schemas import JWTPayload
 
-config = dotenv_values(".env")
+config = dotenv_values(".env.development")
 
 
 class Jwt_Service:

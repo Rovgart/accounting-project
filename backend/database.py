@@ -1,11 +1,16 @@
-import asyncio
-from models.models import Base
-from database import engine
+from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker, AsyncSession
+from sqlalchemy.orm import declarative_base
 
-async def init_db():
-    async with engine.begin() as conn:
-        await conn.run_sync(Base.metadata.create_all)
-    print("✅ Baza danych i tabele zostały utworzone.")
+DATABASE_URL = "sqlite+aiosqlite:///./app.db"
 
-if __name__ == "__main__":
-    asyncio.run(init_db())
+engine = create_async_engine(
+    DATABASE_URL,
+    echo=True,  # Debug: pokazuje zapytania SQL w konsoli
+    future=True,
+)
+
+AsyncSessionLocal = async_sessionmaker(
+    bind=engine, class_=AsyncSession, expire_on_commit=False
+)
+
+Base = declarative_base()
