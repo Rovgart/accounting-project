@@ -15,7 +15,6 @@ class JWTPayload(BaseModel):
     email: str
     exp: str
 
-    
 
 class UserData(BaseModel):
     email: str
@@ -73,8 +72,6 @@ class ClientRegisterData(BaseModel):
     company_name: Optional[str] = None
     nip: str
     phone: Optional[str] = None
-    created_at: date
-    updated_at: Optional[date] = None
 
     class Config:
         from_attributes = True
@@ -103,4 +100,3 @@ class Accountant(User):
     ) -> None:
         super().__init__(user_id, email)
         self.certification_number = certification_number
-

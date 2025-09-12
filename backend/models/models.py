@@ -59,9 +59,9 @@ class Client(Base):
     accountant_id = Column(String, ForeignKey("accountants.accountant_id"))
     firstname = Column(String, nullable=False, unique=False)
     lastname = Column(String, nullable=False, unique=False)
-    company_name = Column(String, nullable=False, unique=True)
+    company_name = Column(String, nullable=True, unique=True)
     nip = Column(String, nullable=False, unique=True)
-    phone = Column(String, nullable=False, unique=False)
+    phone = Column(String, nullable=True, unique=False)
     created_at = Column(Date, nullable=False, unique=False)
     updated_at = Column(Date, nullable=False, unique=False)
     user = relationship("UserModel", back_populates="clients")
@@ -114,10 +114,11 @@ class InvoiceDetail(Base):
 
     invoice = relationship("Invoice", back_populates="details")
 
+
 class UserTokens(Base):
-    __tablename__="user_tokens"
-    id=Column(Integer, primary_key=True)
-    user_id=Column(Integer, ForeignKey("users.user_id", ondelete="CASCADE"))
-    token=Column(String, nullable=True)
-    expires_at=Column(DateTime, nullable=False)
-    type=Column(String)
+    __tablename__ = "user_tokens"
+    id = Column(Integer, primary_key=True)
+    user_id = Column(Integer, ForeignKey("users.user_id", ondelete="CASCADE"))
+    token = Column(String, nullable=True)
+    expires_at = Column(DateTime, nullable=False)
+    type = Column(String)
